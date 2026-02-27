@@ -64,40 +64,41 @@ Both operate outside direct application control. All communication crosses the T
 ![Alt text](archdiag.png)
 
 ---
-
 ## Task 2 - Asset Identification and Security Objectives
 
-### Asset Inventory
+### Asset Identification
 
-| ID | Asset | Description | Location | Sensitivity |
-|----|-------|-------------|----------|-------------|
-| A1 | User Credentials | Hashed passwords, tokens, MFA secrets | Auth Service, User DB | Critical |
-| A2 | Personal Data (PII) | Names, emails, contact information | User DB | High |
-| A3 | Payment Card Data | Card number, expiry, CVV (in transit to gateway) | Payment Processing Service | Critical |
-| A4 | Transaction Records | Amounts, timestamps, statuses, references | Transaction DB | Critical |
-| A5 | Merchant Financial Data | Merchant profiles, settlement data | Merchant DB | High |
-| A6 | API Keys & Secrets | Payment Gateway credentials, service secrets | App Configuration | Critical |
-| A7 | Audit Logs | Auth logs, admin actions, transaction events | Log DB | High |
-| A8 | Business Logic | Payment validation rules, authorization workflows | Payment Processing Service | Critical |
-| A9 | Administrative Controls | Admin configurations, dispute management | Admin Portal | Critical |
-| A10 | System Availability | Platform uptime, service responsiveness | Entire System | Critical |
+The Online Payment Processing Application handles multiple assets across authentication, financial processing, and administrative domains. These assets are classified based on their sensitivity and operational importance.
 
-### Asset-to-Security Objective Mapping
+### Asset Inventory Table
 
-| Asset | Confidentiality | Integrity | Availability | Accountability |
-|-------|----------------|-----------|--------------|----------------|
-| A1 - User Credentials | ✔ | ✔ | ✔ | ✔ |
-| A2 - Personal Data | ✔ | ✔ | ✔ | ✔ |
-| A3 - Payment Card Data | ✔ Critical | ✔ Critical | ✔ | ✔ |
-| A4 - Transaction Records | ✔ | ✔ Critical | ✔ Critical | ✔ Critical |
-| A5 - Merchant Financial Data | ✔ | ✔ Critical | ✔ | ✔ |
-| A6 - API Keys & Secrets | ✔ Critical | ✔ Critical | ✔ | ✔ |
-| A7 - Audit Logs | ✔ | ✔ Critical | ✔ | ✔ Critical |
-| A8 - Business Logic | ✔ Restricted | ✔ Critical | ✔ Critical | ✔ |
-| A9 - Administrative Controls | ✔ Restricted | ✔ Critical | ✔ Critical | ✔ Critical |
-| A10 - System Availability | - | ✔ | ✔ Critical | ✔ |
+| Asset ID | Asset Name | Description | Location/Component | Sensitivity Level | Security Objectives (CIA) |
+|-----------|------------|-------------|-------------------|------------------|--------------------------|
+| A1 | User Credentials | Hashed passwords, authentication tokens, MFA secrets | Authentication Service, User Database | Critical | Confidentiality, Integrity, Availability |
+| A2 | Personal Data (PII) | Names, emails, contact information | User Database | High | Confidentiality, Integrity, Availability |
+| A3 | Payment Card Data | Card number, expiry date, CVV (transmitted to gateway) | Payment Processing Service (transit) | Critical | Confidentiality, Integrity, Availability |
+| A4 | Transaction Records | Payment amounts, timestamps, status, references | Transaction Database | Critical | Integrity, Availability |
+| A5 | Merchant Financial Data | Merchant profiles, settlement data | Merchant Database | High | Confidentiality, Integrity, Availability |
+| A6 | API Keys & Integration Secrets | Payment Gateway credentials, service-to-service secrets | Application Configuration | Critical | Confidentiality, Integrity, Availability |
+| A7 | Audit Logs | Authentication logs, admin actions, transaction events | Log Database | High | Integrity, Availability |
+| A8 | Business Logic | Payment validation rules, authorization workflows | Payment Processing Service | Critical | Integrity, Availability |
+| A9 | Administrative Controls | Admin configurations, dispute management actions | Admin Portal | Critical | Integrity, Availability |
+| A10 | System Infrastructure / Uptime | Platform uptime, service responsiveness | Entire System | Critical | Integrity, Availability |
 
-**Priorities:** Credentials and API secrets (A1, A6) carry the highest confidentiality and integrity weight - compromise enables full system takeover. Payment and transaction data (A3, A4) require strong integrity to prevent fraud. Audit logs (A7) are critical for non-repudiation and compliance. Business logic (A8) integrity prevents logic-based attacks such as payment manipulation.
+### Security Objectives
+
+The system must ensure the following security objectives for its assets:
+
+- **Confidentiality** - Prevent unauthorized disclosure of sensitive data.  
+- **Integrity** - Prevent unauthorized modification of data or business logic.  
+- **Availability** - Ensure continuous system functionality and uptime.  
+
+### Explanation of Security Priorities
+
+- **User Credentials, API Keys, Payment Data** require high confidentiality and integrity, as compromise could lead to system takeover or financial fraud.  
+- **Transaction Records, Business Logic, Administrative Controls** require strong integrity and availability to prevent fraud, maintain correct processing, and support operations.  
+- **Audit Logs** focus on integrity and availability to ensure logs remain accurate and accessible.  
+- **System Infrastructure / Uptime** emphasizes integrity and availability to prevent downtime and ensure reliable service.
 
 ---
 
