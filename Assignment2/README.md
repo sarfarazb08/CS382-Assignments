@@ -17,8 +17,8 @@
 13. [Content Security Policy (CSP) Bypass](#13-content-security-policy-csp-bypass)
 14. [JavaScript](#14-javascript)
 15. [Security Level Comparison](#15-security-level-comparison)
-16. [Analysis Questions](#17-analysis-questions)
-17. [Docker Inspection Tasks](#16-docker-inspection-tasks)
+16. [Security Analysis Questions](#16-security-analysis-questions)
+17. [Docker Inspection Tasks](#17-docker-inspection-tasks)
 ---
 
 ## 1. Brute Force
