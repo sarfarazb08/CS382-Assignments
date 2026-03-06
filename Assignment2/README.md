@@ -16,7 +16,7 @@
 12. [XSS (Stored)](#12-xss-stored)
 13. [Content Security Policy (CSP) Bypass](#13-content-security-policy-csp-bypass)
 14. [JavaScript](#14-javascript)
-
+15. [Security Level Comparison](#15-security-level-comparison)
 ---
 
 ## 1. Brute Force
@@ -752,3 +752,47 @@ do_elsesomething("XX")
 ![JavaScript – High](assets/14_C.png)
 
 ---
+
+## 15. Security Level Comparison
+
+### Brute Force
+Low imposes no restrictions - attempts are unlimited and instant. Medium adds a fixed 2-second delay, which slows attacks but still allows them given enough time. High introduces a CSRF token alongside a random delay, making automation meaningfully harder - though not impossible if the token can be extracted.
+
+### Command Injection
+Low passes input directly to `system()` with no filtering, making semicolon-chaining trivial. Medium blocks semicolons but leaves the pipe operator open - swapping one character resumes the attack. High filters pipe followed by a space, but omitting the space entirely bypasses it, showing that a near-complete blacklist is still an incomplete one.
+
+### CSRF
+Low has no protection - any crafted link triggers the action on a logged-in victim. Medium validates the Referer header, which sounds reasonable until same-origin XSS renders it meaningless. High introduces a proper CSRF token, but if XSS is achievable anywhere on the site, the token can be read from the DOM and replayed.
+
+### File Inclusion
+Low passes the filename directly to `include()`, making directory traversal immediate. Medium strips `../` but only once, so patterns like `....//` reassemble into a valid traversal after filtering. High enforces a prefix check, but accepting anything starting with `"file"` inadvertently permits the `file://` URI scheme and full local filesystem access.
+
+### File Upload
+Low enforces nothing - a PHP shell uploads and executes without friction. Medium checks the MIME type, but since that value comes from the request header, spoofing `image/jpeg` is sufficient to pass. High adds extension validation and `getimagesize()`, but PHP code embedded in a valid image executes when the file is loaded through the File Inclusion vulnerability.
+
+### Insecure CAPTCHA
+Low stores the current step in a hidden client-side field - changing it to `2` skips the CAPTCHA entirely. Medium adds a `passed_captcha` flag, but it lives in the same client-side form, making it equally trivial to set. High moves logic server-side but retains a hardcoded bypass triggered by a specific CAPTCHA value and a spoofed `User-Agent`.
+
+### SQL Injection
+Low concatenates input directly into the query - a `UNION SELECT` immediately dumps the users table. Medium replaces the text field with a dropdown, but modifying the option value via DOM inspection bypasses the UI entirely. High routes input through a session variable, adding indirection without adding sanitization - the query remains just as injectable.
+
+### SQL Injection (Blind)
+Low confirms injection immediately through a `SLEEP(5)` delay on a direct input field. Medium changes the interface to a dropdown, but the same timing payload works after a quick DOM edit. High mirrors the regular SQL Injection High approach - the session-stored value still reaches the query unsanitized, and the delay confirms it.
+
+### Weak Session IDs
+Low uses a simple incrementing counter, making session IDs trivially enumerable. Medium switches to Unix timestamps, which are harder to guess but still monotonically predictable within a known time window. High hashes the counter and timestamp with MD5, adding opacity - but since both inputs remain approximable, the output space is narrower than it appears.
+
+### XSS (DOM)
+Low writes the URL parameter directly into the DOM, executing any injected `<script>` without interference. Medium blocks script tags, but breaking out of the existing `<select>` element and injecting an `<img onerror>` handler achieves the same result. High applies server-side filtering, which is bypassed entirely by placing the payload in the URL fragment - a value the server never sees.
+
+### XSS (Reflected)
+Low reflects input into the response with no encoding, executing inline scripts immediately. Medium strips the lowercase string `<script>`, which mixed-case input sidesteps without effort. High uses a regex to block script-related tags, but event handler attributes like `onerror` contain no restricted keywords and execute freely.
+
+### XSS (Stored)
+Low stores and renders input unsanitized, meaning a single submission affects every subsequent visitor. Medium applies the same lowercase `<script>` strip seen in Reflected - and falls to the same mixed-case bypass, now with persistent impact. High blocks script patterns more aggressively, but `<img onerror>` avoids the filter entirely and persists in the database.
+
+### CSP Bypass
+Low whitelists Pastebin as a script source, but Pastebin now serves raw content as `text/plain`, which browsers refuse to execute - the intended attack fails due to an external platform change. Medium introduces a nonce for inline scripts, but the nonce is static and printed in the page source, making it freely reusable. High enforces `script-src 'self'`, which is strong in principle - but directly editing the same-origin JSONP endpoint replaces its output with arbitrary JavaScript the browser executes with full trust.
+
+### JavaScript
+Low exposes the token generation function globally, making it directly callable from the browser console. Medium moves the logic to a minified external file, but pretty-printing it reveals a straightforward string reversal that can be replicated or invoked just as easily. High obfuscates the logic significantly, removing any clearly named function and making the token generation process genuinely difficult to trace or reproduce.
