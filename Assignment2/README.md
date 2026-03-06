@@ -71,7 +71,7 @@
 ```
 
 **Result:** Directory contents were still returned (`help`, `index.php`, `source`).  
-**Why it worked:** The application filtered semicolons but left the pipe operator (`|`) unblocked. Incomplete filtering is effectively no filtering — the attack still succeeded via a different shell operator.
+**Why it worked:** The application filtered semicolons but left the pipe operator (`|`) unblocked. Incomplete filtering is effectively no filtering - the attack still succeeded via a different shell operator.
 
 ![Command Injection – Medium](assets/2_B.png)
 
@@ -79,8 +79,14 @@
 
 ### Security Level: High
 
-**Result:** Command injection was not successful at this level.  
-**Why it's harder:** The High level applies a more comprehensive blocklist of shell metacharacters, including `;`, `|`, `&`, and others, preventing command chaining.
+**Payload:**  
+123456 |ls
+
+**Result:**  
+The directory contents were displayed (help, index.php, source), showing that the injected command executed successfully.
+
+**Why It Worked:**  
+The application attempted to filter dangerous characters using a blacklist. However, it mistakenly filtered `"| "` (pipe followed by a space) instead of the pipe character itself. Since the payload used `|ls` without a space, the filter did not remove it, allowing command injection to occur.
 
 ![Command Injection – High](assets/2_C.png)
 
@@ -96,7 +102,7 @@ http://localhost:8080/vulnerabilities/csrf/?password_new=bruhmoment&password_con
 ```
 
 **Result:** Password was changed successfully without requiring the current password or any token.  
-**Why it worked:** No CSRF token or origin validation was present. The GET request was trusted unconditionally — any crafted link could trigger the action if the victim was logged in.
+**Why it worked:** No CSRF token or origin validation was present. The GET request was trusted unconditionally - any crafted link could trigger the action if the victim was logged in.
 
 ![CSRF – Low](assets/3_A.png)
 
@@ -130,7 +136,7 @@ http://localhost:8080/vulnerabilities/csrf/index.php?password_new=12345&password
 ```
 
 **Result:** Password was changed successfully.  
-**Why it worked:** The application validates a session-based CSRF token, which is the correct approach. However, if an attacker can execute JavaScript in the victim's browser (e.g., via XSS), they can extract the token from the DOM and include it in a forged request — bypassing the protection entirely.
+**Why it worked:** The application validates a session-based CSRF token, which is the correct approach. However, if an attacker can execute JavaScript in the victim's browser (e.g., via XSS), they can extract the token from the DOM and include it in a forged request - bypassing the protection entirely.
 
 ![CSRF – High](assets/3_C.png)
 
@@ -175,7 +181,7 @@ http://localhost:8080/vulnerabilities/csrf/index.php?password_new=12345&password
 ```
 
 **Result:** The contents of `/etc/passwd` were displayed.  
-**Why it worked:** The application uses `fnmatch("file*", $file)` to validate input, meaning any value beginning with `"file"` is accepted. The `file://` URI scheme is a valid PHP stream wrapper that allows direct access to local filesystem paths — bypassing the intended restriction entirely.
+**Why it worked:** The application uses `fnmatch("file*", $file)` to validate input, meaning any value beginning with `"file"` is accepted. The `file://` URI scheme is a valid PHP stream wrapper that allows direct access to local filesystem paths - bypassing the intended restriction entirely.
 
 ![File Inclusion – High](assets/4_C.png)
 
@@ -242,7 +248,7 @@ http://localhost:8080/hackable/uploads/mediumshell.php?cmd=ls
 ```
 
 **Result:** The `ls` command executed and returned directory contents.  
-**Why it worked:** The server only checks the MIME type sent in the HTTP request header — not the actual file contents. Spoofing `image/jpeg` satisfies the check while the file remains a fully functional PHP shell.
+**Why it worked:** The server only checks the MIME type sent in the HTTP request header - not the actual file contents. Spoofing `image/jpeg` satisfies the check while the file remains a fully functional PHP shell.
 
 ![File Upload – Medium](assets/5_B.png)
 
@@ -264,7 +270,7 @@ http://localhost:8080/vulnerabilities/fi/?page=../../hackable/uploads/highshell.
 ```
 
 **Result:** The command executed and returned directory contents.  
-**Why it worked:** The server verifies the image format but not whether PHP code is embedded within it. When the file is loaded via File Inclusion, PHP interprets the embedded code — demonstrating how chaining two vulnerabilities can bypass each individual control.
+**Why it worked:** The server verifies the image format but not whether PHP code is embedded within it. When the file is loaded via File Inclusion, PHP interprets the embedded code - demonstrating how chaining two vulnerabilities can bypass each individual control.
 
 ![File Upload – High](assets/5_C.png)
 
@@ -371,7 +377,7 @@ http://localhost:8080/vulnerabilities/fi/?page=../../hackable/uploads/highshell.
 **Method:** The **"Change your ID"** link opens a separate input page. The value entered there is stored in a session variable and used in the main query.
 
 **Result:** Usernames and password hashes were returned.  
-**Why it worked:** Although input is no longer a direct GET parameter, the session-stored value is still inserted into the SQL query without sanitization or prepared statements. The injection point moved — but the vulnerability remained.
+**Why it worked:** Although input is no longer a direct GET parameter, the session-stored value is still inserted into the SQL query without sanitization or prepared statements. The injection point moved - but the vulnerability remained.
 
 ![SQL Injection – High](assets/7_C.png)
 
@@ -387,7 +393,7 @@ http://localhost:8080/vulnerabilities/fi/?page=../../hackable/uploads/highshell.
 ```
 
 **Result:** Page response was delayed by ~5 seconds, then returned "User ID is MISSING from the database."  
-**Why it worked:** The injected `SLEEP(5)` function was executed by the database. The observable delay confirms that the SQL was interpreted — a classic time-based Blind SQL Injection.
+**Why it worked:** The injected `SLEEP(5)` function was executed by the database. The observable delay confirms that the SQL was interpreted - a classic time-based Blind SQL Injection.
 
 ![SQL Injection (Blind) – Low](assets/8_A.png)
 
@@ -403,7 +409,7 @@ http://localhost:8080/vulnerabilities/fi/?page=../../hackable/uploads/highshell.
 **Method:** Modified the dropdown input via **Inspect Element** to allow manual payload entry.
 
 **Result:** Page response was delayed by ~5 seconds.  
-**Why it worked:** Despite the dropdown UI, the submitted value is still inserted directly into the SQL query. The delay confirms successful injection, same as Low — only the interface differed.
+**Why it worked:** Despite the dropdown UI, the submitted value is still inserted directly into the SQL query. The delay confirms successful injection, same as Low - only the interface differed.
 
 ![SQL Injection (Blind) – Medium](assets/8_B.png)
 
@@ -419,7 +425,7 @@ http://localhost:8080/vulnerabilities/fi/?page=../../hackable/uploads/highshell.
 **Method:** Entered via the **"Change your ID"** secondary input page (same approach as regular SQL Injection – High).
 
 **Result:** Page response was delayed by ~5 seconds.  
-**Why it worked:** The session-stored ID is still inserted into the query unsanitized, identical to the High level of regular SQL Injection. The only difference is the payload — `SLEEP(5)` instead of `UNION SELECT` — confirming the injection through timing rather than visible output.
+**Why it worked:** The session-stored ID is still inserted into the query unsanitized, identical to the High level of regular SQL Injection. The only difference is the payload - `SLEEP(5)` instead of `UNION SELECT` - confirming the injection through timing rather than visible output.
 
 ![SQL Injection (Blind) – High](assets/8_C.png)
 
@@ -451,7 +457,7 @@ http://localhost:8080/vulnerabilities/fi/?page=../../hackable/uploads/highshell.
 
 ### Security Level: High
 
-**Observation:** The `dvwaSession` cookie did not change when clicking **Generate** — it retained the value from earlier tests.
+**Observation:** The `dvwaSession` cookie did not change when clicking **Generate** - it retained the value from earlier tests.
 
 **Result:** New session ID values could not be captured or analyzed for this level.  
 **Note:** This appears to be an environment-specific issue. The cookie was not being regenerated during testing, which prevented analysis of the High difficulty implementation. Normally, High difficulty uses an MD5 hash combining the counter and timestamp, which is still predictable if either component can be approximated.
@@ -691,7 +697,7 @@ echo "alert(document.cookie)";
 ```
 
 **Result:** Clicking "Solve the sum" triggered an alert displaying the session cookie.  
-**Why it worked:** The CSP policy is `script-src 'self'`, which trusts `jsonp.php` because it is same-origin. CSP validates the source URL — not the file's contents. Replacing the JSONP response body with arbitrary JavaScript causes the browser to execute it with full trust.
+**Why it worked:** The CSP policy is `script-src 'self'`, which trusts `jsonp.php` because it is same-origin. CSP validates the source URL - not the file's contents. Replacing the JSONP response body with arbitrary JavaScript causes the browser to execute it with full trust.
 
 ![CSP Bypass – High](assets/13_C1.png)
 ![CSP Bypass – High](assets/13_C2.png)
