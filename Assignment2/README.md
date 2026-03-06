@@ -261,9 +261,9 @@ http://localhost:8080/hackable/uploads/mediumshell.php?cmd=ls
 **Payload:** A valid JPEG image with PHP code appended to it, saved as `highshell.jpg`.
 
 **Upload Result:** Passed all server-side checks:
-- Extension: `.jpg` ✓
-- File size: < 100KB ✓
-- `getimagesize()` confirmed valid image ✓
+- Extension: `.jpg` 
+- File size: < 100KB 
+- `getimagesize()` confirmed valid image 
 
 **Execution Method:** The `.jpg` extension prevented direct execution. However, the **File Inclusion** vulnerability was chained to include and execute the uploaded file:
 
@@ -302,7 +302,7 @@ http://localhost:8080/vulnerabilities/fi/?page=../../hackable/uploads/highshell.
 ### Security Level: Medium
 
 **Steps:**
-1. Opened the CAPTCHA module and right-clicked → **Inspect**.
+1. Opened the CAPTCHA module and right-clicked - **Inspect**.
 2. Located the hidden step field and changed it:
 ```html
 <input type="hidden" name="step" value="2">
@@ -324,7 +324,7 @@ http://localhost:8080/vulnerabilities/fi/?page=../../hackable/uploads/highshell.
 
 **Steps:**
 1. Opened the CAPTCHA page, filled in `password_new` and `password_conf`.
-2. Opened Developer Tools → **Network** tab and submitted the form once to capture the request.
+2. Opened Developer Tools - **Network** tab and submitted the form once to capture the request.
 3. Modified the request: set the CAPTCHA value to `hidd3n_valu3`.
 4. Spoofed the `User-Agent` header to `reCAPTCHA`.
 5. Resent the modified request.
