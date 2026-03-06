@@ -801,25 +801,23 @@ Low exposes the token generation function globally, making it directly callable 
 
 ---
 
----
-
 ## 16. Security Analysis Questions
 
 ### 1. Why does SQL Injection succeed at Low security?
 
-User input is concatenated directly into the SQL query with zero sanitization. When you submit `1' UNION SELECT user, password FROM users #`, the database receives and executes it as a legitimate query — it has no way to distinguish your injected code from the intended command.
+User input is concatenated directly into the SQL query with zero sanitization. When you submit `1' UNION SELECT user, password FROM users #`, the database receives and executes it as a legitimate query - it has no way to distinguish your injected code from the intended command.
 
 ---
 
 ### 2. What control prevents it at High?
 
-Nothing meaningful, actually — and that's the point. High difficulty reroutes input through a session variable instead of a direct GET parameter, which adds indirection but no actual protection. The session value still lands in the query unsanitized. The real fix (not implemented at any level in DVWA) would be **prepared statements / parameterized queries**, which separate code from data entirely so injected SQL is treated as a literal string, never as executable code.
+Nothing meaningful, actually - and that's the point. High difficulty reroutes input through a session variable instead of a direct GET parameter, which adds indirection but no actual protection. The session value still lands in the query unsanitized. The real fix (not implemented at any level in DVWA) would be **prepared statements / parameterized queries**, which separate code from data entirely so injected SQL is treated as a literal string, never as executable code.
 
 ---
 
 ### 3. Does HTTPS prevent these attacks? Why or why not?
 
-No. HTTPS encrypts data *in transit* between the browser and server — it protects against eavesdropping on the network. Every attack in this report happens *after* the data arrives at the server. SQLi, XSS, CSRF, command injection — all of these exploit how the application processes input, which HTTPS has no visibility into. A well-encrypted connection to a vulnerable app is still a vulnerable app.
+No. HTTPS encrypts data *in transit* between the browser and server - it protects against eavesdropping on the network. Every attack in this report happens *after* the data arrives at the server. SQLi, XSS, CSRF, command injection - all of these exploit how the application processes input, which HTTPS has no visibility into. A well-encrypted connection to a vulnerable app is still a vulnerable app.
 
 ---
 
@@ -827,12 +825,12 @@ No. HTTPS encrypts data *in transit* between the browser and server — it prote
 
 Several serious ones:
 
-- **Full database compromise** — SQL Injection exposes all usernames, password hashes, and any other stored data
-- **Remote Code Execution** — File Upload + File Inclusion chained together gives an attacker a shell on the server
-- **Account takeover at scale** — Stored XSS persists in the database and executes for every visitor, enabling mass session hijacking
-- **Complete authentication bypass** — Brute Force has no lockout, and Weak Session IDs let attackers enumerate valid sessions without ever knowing a password
-- **Server-level access** — Command Injection lets attackers run arbitrary OS commands, potentially pivoting beyond the container
-- **Credential theft** — Password hashes exposed via SQLi can be cracked offline (DVWA uses unsalted MD5)
+- **Full database compromise** - SQL Injection exposes all usernames, password hashes, and any other stored data
+- **Remote Code Execution** - File Upload + File Inclusion chained together gives an attacker a shell on the server
+- **Account takeover at scale** - Stored XSS persists in the database and executes for every visitor, enabling mass session hijacking
+- **Complete authentication bypass** - Brute Force has no lockout, and Weak Session IDs let attackers enumerate valid sessions without ever knowing a password
+- **Server-level access** - Command Injection lets attackers run arbitrary OS commands, potentially pivoting beyond the container
+- **Credential theft** - Password hashes exposed via SQLi can be cracked offline (DVWA uses unsalted MD5)
 
 In short: a publicly exposed DVWA instance would be fully compromised within minutes.
 
@@ -872,7 +870,7 @@ CONTAINER ID   IMAGE                  COMMAND      CREATED      STATUS        PO
 7b893dbce6ae   vulnerables/web-dvwa   "/main.sh"   2 days ago   Up 14 hours   0.0.0.0:8080->80/tcp   dvwa
 ```
 
-**Description:** This command shows all the containers currently running on your machine. Here we can see the `dvwa` container is up and running. Notice how port 80 inside the container is mapped to port 8080 on your host machine — that's why you can visit DVWA in your browser at `http://localhost:8080`.
+**Description:** This command shows all the containers currently running on your machine. Here we can see the `dvwa` container is up and running. Notice how port 80 inside the container is mapped to port 8080 on your host machine - that's why you can visit DVWA in your browser at `http://localhost:8080`.
 
 ---
 
@@ -899,7 +897,7 @@ docker inspect dvwa
 }
 ```
 
-**Description:** Think of `docker inspect` as a way to peek under the hood of your container. It dumps out everything Docker knows about it — network settings, port mappings, status, and more. You can see the container is running and has been assigned the internal IP `172.17.0.2`.
+**Description:** Think of `docker inspect` as a way to peek under the hood of your container. It dumps out everything Docker knows about it - network settings, port mappings, status, and more. You can see the container is running and has been assigned the internal IP `172.17.0.2`.
 
 ---
 
@@ -922,7 +920,7 @@ Apache/2.4.25 (Debian) configured -- resuming normal operations
 172.17.0.1 - - "GET /login.php HTTP/1.1" 200
 ```
 
-**Description:** This is basically the container's diary — it shows everything that happened since it started up. You can see MariaDB and Apache both booting successfully, and even the HTTP request that was made when someone loaded the login page.
+**Description:** This is basically the container's diary - it shows everything that happened since it started up. You can see MariaDB and Apache both booting successfully, and even the HTTP request that was made when someone loaded the login page.
 
 ---
 
@@ -933,7 +931,7 @@ Apache/2.4.25 (Debian) configured -- resuming normal operations
 docker exec -it dvwa /bin/bash
 ```
 
-**Description:** This drops you into a live Bash shell inside the container — like SSH-ing into a mini Linux machine. From here you can poke around the filesystem, run commands, and explore the environment directly.
+**Description:** This drops you into a live Bash shell inside the container - like SSH-ing into a mini Linux machine. From here you can poke around the filesystem, run commands, and explore the environment directly.
 
 ---
 
@@ -952,7 +950,7 @@ COPYING.txt   about.php     docs          external      hackable      index.php
 login.php     php.ini       robots.txt    setup.php
 ```
 
-**Description:** Once inside the container, this lists everything in `/var/www/html` — which is where Apache looks for files to serve. You can see all the DVWA pages here, like `login.php`, `setup.php`, and the `vulnerabilities` folder where all the labs live.
+**Description:** Once inside the container, this lists everything in `/var/www/html` - which is where Apache looks for files to serve. You can see all the DVWA pages here, like `login.php`, `setup.php`, and the `vulnerabilities` folder where all the labs live.
 
 ---
 
@@ -964,8 +962,8 @@ All of DVWA's files are stored at `/var/www/html` inside the container. This is 
 
 **What Backend Technology DVWA Uses**
 
-DVWA runs on a classic LAMP stack — which stands for **Linux, Apache, MySQL/MariaDB, and PHP**. PHP handles all the server-side logic, Apache delivers the pages to your browser, and MariaDB stores the data (like users and settings). It's a very common setup you'll see in the real world too.
+DVWA runs on a classic LAMP stack - which stands for **Linux, Apache, MySQL/MariaDB, and PHP**. PHP handles all the server-side logic, Apache delivers the pages to your browser, and MariaDB stores the data (like users and settings). It's a very common setup you'll see in the real world too.
 
 **How Docker Isolates the Environment**
 
-Docker wraps DVWA and everything it needs into a self-contained container with its own filesystem, processes, and network. This means nothing DVWA does can mess with your host machine or other containers — it's sandboxed. It's also why you need that port mapping (`8080:80`), since the container's network is separate from yours by default.
+Docker wraps DVWA and everything it needs into a self-contained container with its own filesystem, processes, and network. This means nothing DVWA does can mess with your host machine or other containers - it's sandboxed. It's also why you need that port mapping (`8080:80`), since the container's network is separate from yours by default.
