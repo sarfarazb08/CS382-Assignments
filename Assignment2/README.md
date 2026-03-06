@@ -27,8 +27,6 @@
 **Result:** Credentials `admin` / `password` were successfully brute-forced.  
 **Why it worked:** No rate limiting or account lockout mechanisms were implemented.
 
-![Brute Force – Low](assets/1_A.png)
-
 ---
 
 ### Security Level: Medium
@@ -36,8 +34,6 @@
 **Method:** A fixed 2-second delay was introduced between login attempts, but unlimited attempts were still allowed.  
 **Result:** Login was eventually successful despite the delay.  
 **Why it worked:** The delay slows attacks but does not prevent them. Given enough time, brute force still succeeds.
-
-![Brute Force – Medium](assets/1_B.png)
 
 ---
 
@@ -47,7 +43,7 @@
 **Result:** Automated brute-force is significantly more difficult.  
 **Why it's harder:** The CSRF token requires a valid session-based token on every request, breaking simple scripted attacks. The random delay further complicates timing-based automation.
 
-![Brute Force – High](assets/1_C.png)
+![Brute Force – Low](assets/1_A.png)
 
 ---
 
