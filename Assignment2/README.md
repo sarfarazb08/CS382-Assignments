@@ -328,7 +328,8 @@ http://localhost:8080/vulnerabilities/fi/?page=../../hackable/uploads/highshell.
 **Result:** Password was changed successfully.  
 **Why it worked:** The application contains leftover development logic that grants CAPTCHA bypass when a specific hardcoded value and matching `User-Agent` are present in the request.
 
-![Insecure CAPTCHA – High](assets/6_C.png)
+![Insecure CAPTCHA – High](assets/6_C1.png)
+![Insecure CAPTCHA – High](assets/6_C2.png)
 
 ---
 
@@ -696,7 +697,8 @@ echo "alert(document.cookie)";
 **Result:** Clicking "Solve the sum" triggered an alert displaying the session cookie.  
 **Why it worked:** The CSP policy is `script-src 'self'`, which trusts `jsonp.php` because it is same-origin. CSP validates the source URL — not the file's contents. Replacing the JSONP response body with arbitrary JavaScript causes the browser to execute it with full trust.
 
-![CSP Bypass – High](assets/13_C.png)
+![CSP Bypass – High](assets/13_C1.png)
+![CSP Bypass – High](assets/13_C2.png)
 
 ---
 
